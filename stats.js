@@ -51,6 +51,7 @@ function table(data) {
 	for (let key in result) {
 	  table[key] = tableRow(result[key]);
 	}
+	console.log(table, ' table?')
 	
 	console.table(table);
 }
