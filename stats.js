@@ -73,7 +73,7 @@ function showSession(id) {
 // любые другие сценарии, которые считаете полезными
 // показать сессию пользователя
 function showMetricByDay(dates, selectedDate) {
-	console.log(`Метрика за ${date}`);
+	console.log(`Метрика за ${selectedDate}`);
 
 	const filteredData = dates.filter(({ date }) => date === selectedDate);
 
