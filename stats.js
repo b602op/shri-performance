@@ -1,3 +1,5 @@
+const bigID = 'C09E3957-507E-4CD9-B55B-453A1D766624';
+
 function quantile(arr, q) {
     const sorted = arr.sort((a, b) => a - b);
     const pos = (sorted.length - 1) * q;
@@ -19,61 +21,76 @@ function prepareData(result) {
 	});
 }
 
+// helpers
+function tableRow(dates) {
+	dates.sort((a, b) => a - b);
+  
+	return {
+		hits: data.length,
+		p25: quantile(data, 0.25),
+		p50: quantile(data, 0.5),
+		p75: quantile(data, 0.75),
+		p95: quantile(data, 0.95)
+	};
+}
+
+function table(data) {
+	let result = {};
+	let table = {};
+
+	for (let { name, value } of data) {
+	  if (result[name]) {
+		  result[name] = [...result[name], value]
+		  continue
+	  }
+	  
+	  result[name] = [value];
+	}
+  
+	
+	for (let key in result) {
+	  table[key] = tableRow(result[key]);
+	}
+	
+	console.table(table);
+}
+
 // TODO: реализовать
 // показать значение метрики за несколько день
-function showMetricByPeriod() {
+function showMetricByPeriod(dates, firstDate, secondDate) {
+	console.log(`Метрики c ${firstDate} по ${secondDate}`);
+
+	const filteredData = dates.filter(({ date }) => (date >= firstDate) && (date <= secondDate));
+
+	table(filteredData);
 }
 
 // показать сессию пользователя
-function showSession() {
-}
-
-// сравнить метрику в разных срезах
-function compareMetric() {
+function showSession(id) {
+	console.log(`ID сессии${id}`);
 }
 
 // любые другие сценарии, которые считаете полезными
+// показать сессию пользователя
+function showMetricByDay(dates, selectedDate) {
+	console.log(`Метрика за ${date}`);
 
+	const filteredData = dates.filter(({ date }) => date === selectedDate);
 
-// Пример
-// добавить метрику за выбранный день
-function addMetricByDate(data, page, name, date) {
-	let sampleData = data
-					.filter(item => item.page == page && item.name == name && item.date == date)
-					.map(item => item.value);
-
-	let result = {};
-
-	result.hits = sampleData.length;
-	result.p25 = quantile(sampleData, 0.25);
-	result.p50 = quantile(sampleData, 0.5);
-	result.p75 = quantile(sampleData, 0.75);
-	result.p95 = quantile(sampleData, 0.95);
-
-	return result;
+	table(filteredData);
 }
-// рассчитывает все метрики за день
-function calcMetricsByDate(data, page, date) {
-	console.log(`All metrics for ${date}:`);
 
-	let table = {};
-	table.connect = addMetricByDate(data, page, 'connect', date);
-	table.ttfb = addMetricByDate(data, page, 'ttfb', date);
-	table.load = addMetricByDate(data, page, 'load', date);
-	table.square = addMetricByDate(data, page, 'square', date);
-	table.load = addMetricByDate(data, page, 'load', date);
-	table.generate = addMetricByDate(data, page, 'generate', date);
-	table.draw = addMetricByDate(data, page, 'draw', date);
+fetch(`https://shri.yandex/hw/stat/data?counterId=${bigID}`)
+  .then((res) => res.json())
+  .then((result) => {
+    let data = prepareData(result)
+	console.log("----------------------------");
+    console.log("---------  Metrics ---------");
+	console.log("----------------------------");
 
-	console.table(table);
-};
+    showSession(bigID)
+    showMetricByDay(data, "2021-10-31")
+    showMetricByPeriod(data, "2021-09-31", "2021-10-31")
 
-fetch('https://shri.yandex/hw/stat/data?counterId=D8F28E50-3339-11EC-9EDF-9F93090795B1')
-	.then(res => res.json())
-	.then(result => {
-		let data = prepareData(result);
-
-		calcMetricsByDate(data, 'send test', '2021-10-22');
-
-		// добавить свои сценарии, реализовать функции выше
-	});
+	console.log("----------- end ------------");
+  })
