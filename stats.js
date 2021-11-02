@@ -90,7 +90,7 @@ fetch(`https://shri.yandex/hw/stat/data?counterId=${bigID}`)
 	console.log("----------------------------");
 
     showSession(bigID)
-    showMetricByDay(data, new Date())
+    showMetricByDay(data, "2021-03-11")
     showMetricByPeriod(data, "2020-09-31", "2022-10-31")
 
 	console.log("----------- end ------------");
