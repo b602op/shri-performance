@@ -26,11 +26,11 @@ function tableRow(dates) {
 	dates.sort((a, b) => a - b);
   
 	return {
-		hits: data.length,
-		p25: quantile(data, 0.25),
-		p50: quantile(data, 0.5),
-		p75: quantile(data, 0.75),
-		p95: quantile(data, 0.95)
+		hits: dates.length,
+		p25: quantile(dates, 0.25),
+		p50: quantile(dates, 0.5),
+		p75: quantile(dates, 0.75),
+		p95: quantile(dates, 0.95)
 	};
 }
 
